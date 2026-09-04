@@ -1,5 +1,5 @@
-fastapi
-uvicorn[standard]
-firebase-admin
-openai
-python-dotenv
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+firebase-admin==7.5.0
+openai==3.8.0
+python-dotenv==1.2.3
