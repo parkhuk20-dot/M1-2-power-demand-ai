@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전력수요 AI 비서</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>⚡ 전력수요 AI 비서</h1>
+    <p class="notice">백엔드가 무료 서버라 첫 요청은 깨어나는 데 최대 1분쯤 걸릴 수 있어요.</p>
+  </header>
+
+  <main>
+    <!-- 좌: 대화 기록 -->
+    <aside id="sidebar">
+      <div class="panel-head">
+        <h2>대화 기록</h2>
+        <button id="new-chat-btn" title="새 대화">＋ 새 대화</button>
+      </div>
+      <ul id="conv-list"></ul>
+    </aside>
+
+    <!-- 중: 채팅 -->
+    <section id="chat-panel">
+      <div id="summary-box">
+        <h2>데이터 요약</h2>
+        <div id="summary-content">불러오는 중…</div>
+      </div>
+      <div id="chat-log"></div>
+      <form id="chat-form">
+        <input id="chat-input" type="text" placeholder="예: 최근 전력수요 추세가 어때?" autocomplete="off" required>
+        <button id="send-btn" type="submit">전송</button>
+      </form>
+    </section>
+
+    <!-- 우: 데이터 관리 -->
+    <aside id="data-panel">
+      <h2>데이터 관리</h2>
+      <form id="data-form">
+        <input id="data-date" type="date" required>
+        <input id="data-value" type="number" step="any" placeholder="값 (MWh)" required>
+        <input id="data-memo" type="text" placeholder="메모 (선택)">
+        <button type="submit">추가</button>
+      </form>
+      <div id="data-status"></div>
+      <ul id="data-list"></ul>
+    </aside>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

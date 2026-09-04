@@ -1,0 +1,73 @@
+* { box-sizing: border-box; margin: 0; }
+body {
+  font-family: -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  background: #f4f6f8; color: #1c2430; height: 100vh;
+  display: flex; flex-direction: column;
+}
+header { padding: 14px 20px; background: #14213d; color: #fff; }
+header h1 { font-size: 18px; }
+.notice { font-size: 12px; opacity: .7; margin-top: 2px; }
+
+main {
+  flex: 1; display: grid; grid-template-columns: 230px 1fr 280px;
+  gap: 12px; padding: 12px; min-height: 0;
+}
+aside, #chat-panel {
+  background: #fff; border: 1px solid #e1e5ea; border-radius: 10px;
+  padding: 14px; display: flex; flex-direction: column; min-height: 0;
+}
+h2 { font-size: 14px; margin-bottom: 10px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.panel-head h2 { margin: 0; }
+
+button {
+  border: none; border-radius: 6px; background: #14213d; color: #fff;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+button:hover { background: #22345c; }
+button:disabled { opacity: .5; cursor: default; }
+button.danger {
+  background: #c0392b; padding: 3px 8px; font-size: 11px;
+  flex-shrink: 0; white-space: nowrap;   /* 좁은 칼럼에서 두 줄로 접히는 것 방지 */
+}
+.dim { color: #7a8494; font-size: 11.5px; }
+
+/* 대화 기록 */
+#conv-list { list-style: none; overflow-y: auto; flex: 1; }
+#conv-list li {
+  padding: 8px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  display: flex; justify-content: space-between; align-items: center; gap: 6px;
+}
+#conv-list li:hover { background: #eef2f7; }
+#conv-list li.active { background: #dfe8f5; }
+#conv-list li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 채팅 */
+#summary-box {
+  background: #f0f4fa; border: 1px solid #dbe4f0; border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 10px; font-size: 13px;
+}
+#summary-content { line-height: 1.6; }
+#chat-log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+.msg { max-width: 80%; padding: 9px 13px; border-radius: 12px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+.msg.user { align-self: flex-end; background: #14213d; color: #fff; }
+.msg.assistant { align-self: flex-start; background: #eef2f7; }
+.msg.loading { color: #667; font-style: italic; }
+#chat-form { display: flex; gap: 8px; margin-top: 10px; }
+#chat-input { flex: 1; padding: 9px 12px; border: 1px solid #cdd5df; border-radius: 8px; font-size: 14px; }
+
+/* 데이터 관리 */
+#data-form { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+#data-form input { padding: 7px 9px; border: 1px solid #cdd5df; border-radius: 6px; font-size: 13px; }
+#data-status { font-size: 12px; color: #2a7a2a; min-height: 16px; margin-bottom: 6px; }
+#data-list { list-style: none; overflow-y: auto; flex: 1; font-size: 12.5px; }
+#data-list li {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 4px; border-bottom: 1px solid #f0f2f5; gap: 6px;
+}
+#data-list .memo { color: #889; font-size: 11px; }
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; overflow-y: auto; }
+  #chat-panel { order: -1; min-height: 60vh; }
+}
