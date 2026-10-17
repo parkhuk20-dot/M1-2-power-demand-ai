@@ -1,11 +1,11 @@
 # ⚡ 전력수요 AI 비서 — 내 데이터를 아는 AI 챗봇
 
 일반 챗봇은 "요즘 전력수요 어때?"라고 물으면 일반론만 답한다.
-이 서비스는 **일별 전국 전력 최대수요(피크) 데이터 180일치**를 Firestore에 저장하고,
+이 서비스는 **일별 전국 전력 최대수요(피크) 데이터 2년치(731일)**를 Firestore에 저장하고,
 그 요약을 시스템 프롬프트에 주입(컨텍스트 주입)해 **내 데이터 기반의 맞춤형 답변**을 제공한다.
 
 데이터는 [M1-1 전력수요 시계열 분석](../M1-1)에서 정제한
-한국전력거래소 일별 최대수요(2025-07-05 ~ 2025-12-31, 180개)를 사용했다.
+한국전력거래소 일별 최대수요(2024-01-01 ~ 2025-12-31, 731개)를 사용했다.
 
 ## 기술 스택
 
@@ -50,7 +50,7 @@ python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
 cp ../.env.example .env        # 값 채우기 (아래 환경 변수 참고)
-python seed.py                 # 시드 데이터 180개 업로드 (최초 1회)
+python seed.py                 # 시드 데이터 731개 업로드 (최초 1회)
 python test_summary.py         # 요약 로직 자가 검증
 uvicorn main:app --reload      # http://localhost:8000/docs
 
@@ -115,7 +115,7 @@ M1-2/
 │   ├── routers/              엔드포인트 (data / conversations / chat)
 │   ├── services/             비즈니스 로직 (firebase / summary / ai)
 │   ├── seed.py               시드 데이터 업로드 스크립트
-│   ├── seed_data.csv         M1-1에서 추출한 180일치 데이터
+│   ├── seed_data.csv         M1-1에서 추출한 2년치(731일) 데이터
 │   ├── test_summary.py       요약 로직 자가 검증
 │   └── requirements.txt
 ├── frontend/

@@ -29,10 +29,12 @@ def main():
     with open("seed_data.csv") as f:
         rows = list(csv.DictReader(f))
 
-    batch = db.batch()
-    for r in rows:
-        batch.set(col.document(), {"date": r["date"], "value": float(r["value"]), "memo": r["memo"]})
-    batch.commit()
+    # Firestore batch는 한 번에 최대 500건까지만 커밋할 수 있다
+    for i in range(0, len(rows), 500):
+        batch = db.batch()
+        for r in rows[i : i + 500]:
+            batch.set(col.document(), {"date": r["date"], "value": float(r["value"]), "memo": r["memo"]})
+        batch.commit()
     print(f"{len(rows)}개 업로드 완료 ({rows[0]['date']} ~ {rows[-1]['date']})")
 
 
