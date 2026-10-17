@@ -40,7 +40,8 @@ def ask(summary: dict, history: list[dict], user_message: str) -> str:
     resp = client.chat.completions.create(
         model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
         messages=messages,
-        max_tokens=500,  # 과금 방지 상한
-        temperature=0.7,
+        # GPT-5 계열은 max_tokens·temperature를 거부한다. 추론 토큰도 이 상한에
+        # 포함되므로 너무 낮으면 본문이 빈 문자열로 돌아온다.
+        max_completion_tokens=2000,  # 과금 방지 상한
     )
     return resp.choices[0].message.content

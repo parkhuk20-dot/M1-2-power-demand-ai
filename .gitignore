@@ -4,3 +4,6 @@ __pycache__/
 serviceAccountKey.json
 *.pyc
 .vercel
+.env.*
+!.env.example
+.DS_Store
