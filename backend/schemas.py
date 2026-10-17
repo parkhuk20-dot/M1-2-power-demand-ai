@@ -7,7 +7,7 @@ import math
 import re
 from datetime import date as date_type
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 MAX_MEMO_LEN = 200
@@ -42,7 +42,13 @@ class Period(BaseModel):
     @field_validator("start", "end")
     @classmethod
     def valid(cls, v: str | None) -> str | None:
-        return _check_date(v) if v is not None else v
+        return _check_date(v) if v else None
+
+    @model_validator(mode="after")
+    def ordered(self):
+        if self.start and self.end and self.start > self.end:
+            raise ValueError("시작일이 종료일보다 늦습니다")
+        return self
 
 
 class DataCreate(BaseModel):

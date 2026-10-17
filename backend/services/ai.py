@@ -13,8 +13,24 @@ SYSTEM_TEMPLATE = """당신은 전력수요 데이터 분석 비서입니다.
   · 최소 {min} MWh ({min_date})
 - 최근 트렌드: {trend}
 
-위 데이터를 기반으로 한국어로 간결하고 구체적인 맞춤형 답변을 제공하세요.
+[연도별 집계] (연도: 일수 / 평균 / 최대(날짜) / 최소(날짜), 단위 MWh)
+{yearly}
+
+[월별 집계] (월: 일수 / 평균 / 최대(날짜) / 최소(날짜), 단위 MWh)
+{monthly}
+
+위 데이터는 사용자가 선택한 기간의 데이터입니다. 위 데이터를 기반으로 한국어로 간결하고 구체적인 맞춤형 답변을 제공하세요.
 데이터에 없는 내용은 추측하지 말고 없다고 말하세요."""
+
+
+def _group_lines(groups: list[dict]) -> str:
+    if not groups:
+        return "- 없음"
+    return "\n".join(
+        f"- {g['key']}: {g['count']}일 / {g['average']:,} / "
+        f"{g['max']:,}({g['max_date']}) / {g['min']:,}({g['min_date']})"
+        for g in groups
+    )
 
 
 def system_prompt(summary: dict) -> str:
@@ -28,6 +44,8 @@ def system_prompt(summary: dict) -> str:
         min=f"{m.get('min', 0):,}",
         min_date=m.get("min_date", "날짜 미상"),
         trend=summary.get("trend", "알 수 없음"),
+        yearly=_group_lines(summary.get("yearly", [])),
+        monthly=_group_lines(summary.get("monthly", [])),
     )
 
 

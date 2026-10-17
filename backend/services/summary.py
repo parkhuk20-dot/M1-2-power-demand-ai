@@ -1,10 +1,40 @@
 """데이터 요약 계산 — 시스템 프롬프트 주입용."""
 
 
+def _group_stats(rows: list[dict], key_len: int) -> list[dict]:
+    """date 앞 key_len글자(4=연, 7=월)로 묶어 평균·최대·최소와 그 날짜를 낸다.
+
+    rows는 날짜순 정렬돼 있어야 한다.
+    """
+    groups: dict[str, list[dict]] = {}
+    for r in rows:
+        groups.setdefault(r["date"][:key_len], []).append(r)
+    out = []
+    for key, rs in groups.items():
+        vals = [float(r["value"]) for r in rs]
+        hi = max(rs, key=lambda r: float(r["value"]))
+        lo = min(rs, key=lambda r: float(r["value"]))
+        out.append(
+            {
+                "key": key,
+                "count": len(rs),
+                "average": round(sum(vals) / len(vals)),
+                "max": round(float(hi["value"])),
+                "max_date": hi["date"],
+                "min": round(float(lo["value"])),
+                "min_date": lo["date"],
+            }
+        )
+    return out
+
+
 def build_summary(rows: list[dict]) -> dict:
     """rows: [{date: 'YYYY-MM-DD', value: float, ...}] → 요약 dict."""
     if not rows:
-        return {"period": None, "count": 0, "metrics": None, "trend": "데이터 없음"}
+        return {
+            "period": None, "count": 0, "metrics": None, "trend": "데이터 없음",
+            "yearly": [], "monthly": [],
+        }
 
     rows = sorted(rows, key=lambda r: r["date"])
     values = [float(r["value"]) for r in rows]
@@ -43,4 +73,6 @@ def build_summary(rows: list[dict]) -> dict:
         "count": count,
         "metrics": metrics,
         "trend": trend,
+        "yearly": _group_stats(rows, 4),
+        "monthly": _group_stats(rows, 7),
     }

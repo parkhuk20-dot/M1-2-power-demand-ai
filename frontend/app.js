@@ -1,5 +1,15 @@
 const API = window.API_BASE_URL;
 let conversationId = null;
+// 선택 기간. 비어 있으면 전체. 요약·목록·AI 답변이 모두 이 기간을 따른다.
+let period = { start: "", end: "" };
+
+function periodQuery() {
+  const q = new URLSearchParams();
+  if (period.start) q.set("start", period.start);
+  if (period.end) q.set("end", period.end);
+  const s = q.toString();
+  return s ? "?" + s : "";
+}
 
 const $ = (id) => document.getElementById(id);
 const chatLog = $("chat-log");
@@ -19,9 +29,9 @@ async function api(path, opts = {}) {
 /* ---------- 데이터 요약 ---------- */
 async function loadSummary() {
   try {
-    const s = await api("/api/data/summary");
+    const s = await api("/api/data/summary" + periodQuery());
     if (!s.count) {
-      $("summary-content").textContent = "저장된 데이터가 없습니다.";
+      $("summary-content").textContent = "선택한 기간에 데이터가 없습니다.";
       return;
     }
     const m = s.metrics;
@@ -30,7 +40,16 @@ async function loadSummary() {
       `평균 <b>${m.average.toLocaleString()}</b> MWh · ` +
       `최대 ${m.max.toLocaleString()} <span class="dim">(${m.max_date})</span> · ` +
       `최소 ${m.min.toLocaleString()} <span class="dim">(${m.min_date})</span><br>` +
-      `추세: <b>${s.trend}</b>`;
+      `추세: <b>${s.trend}</b><br>` +
+      `연도별 평균: ${s.yearly.map((y) => `${y.key} <b>${y.average.toLocaleString()}</b>`).join(" · ")}` +
+      `<details><summary>월별 집계 (${s.monthly.length}개월)</summary><table>` +
+      `<tr><th>월</th><th>평균</th><th>최대</th><th>최소</th></tr>` +
+      s.monthly.map((g) =>
+        `<tr><td>${g.key}</td><td>${g.average.toLocaleString()}</td>` +
+        `<td>${g.max.toLocaleString()} <span class="dim">${g.max_date.slice(5)}</span></td>` +
+        `<td>${g.min.toLocaleString()} <span class="dim">${g.min_date.slice(5)}</span></td></tr>`
+      ).join("") +
+      `</table></details>`;
   } catch (e) {
     $("summary-content").textContent = "요약 로드 실패: " + e.message;
   }
@@ -58,7 +77,11 @@ $("chat-form").addEventListener("submit", async (e) => {
   try {
     const r = await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ message: text, conversation_id: conversationId }),
+      body: JSON.stringify({
+        message: text,
+        conversation_id: conversationId,
+        period: { start: period.start || null, end: period.end || null },
+      }),
     });
     loading.remove();
     addMsg("assistant", r.reply);
@@ -119,7 +142,7 @@ $("new-chat-btn").addEventListener("click", newChat);
 /* ---------- 데이터 관리 (CRUD) ---------- */
 async function loadData() {
   try {
-    const r = await api("/api/data");
+    const r = await api("/api/data" + periodQuery());
     const ul = $("data-list");
     ul.innerHTML = "";
     r.items.slice(0, 50).forEach((d) => {
@@ -166,6 +189,25 @@ $("data-form").addEventListener("submit", async (e) => {
   } catch (err) {
     setStatus("추가 실패: " + err.message);
   }
+});
+
+/* ---------- 기간 선택 ---------- */
+$("period-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const start = $("period-start").value;
+  const end = $("period-end").value;
+  if (start && end && start > end) {
+    $("summary-content").textContent = "시작일이 종료일보다 늦습니다.";
+    return;
+  }
+  period = { start, end };
+  loadSummary(); loadData();
+});
+$("period-reset").addEventListener("click", () => {
+  $("period-start").value = "";
+  $("period-end").value = "";
+  period = { start: "", end: "" };
+  loadSummary(); loadData();
 });
 
 /* ---------- 초기화 ---------- */

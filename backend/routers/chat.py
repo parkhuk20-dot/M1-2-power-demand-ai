@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 
 from schemas import ChatRequest
 from services import ai
-from services.firebase import get_db
+from services.firebase import fetch_data, get_db
 from services.summary import build_summary
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -14,8 +14,8 @@ def chat(body: ChatRequest):
     """흐름: 데이터 요약 → 시스템 프롬프트 주입 → GPT 호출 → 대화 자동 저장."""
     db = get_db()
 
-    rows = [d.to_dict() for d in db.collection("data").stream()]
-    summary = build_summary(rows)
+    period = body.period
+    summary = build_summary(fetch_data(period.start, period.end) if period else fetch_data())
 
     history = []
     conv_ref = None

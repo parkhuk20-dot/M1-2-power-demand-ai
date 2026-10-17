@@ -25,3 +25,17 @@ def get_db():
             firebase_admin.initialize_app(credentials.Certificate(info))
         _db = firestore.client()
     return _db
+
+
+def fetch_data(start: str | None = None, end: str | None = None) -> list[dict]:
+    """data 컬렉션 조회. 기간은 양 끝 포함.
+
+    날짜가 YYYY-MM-DD 문자열이라 사전순 비교가 곧 날짜순 비교다.
+    기간을 Firestore 쿼리에서 거르므로 좁힐수록 읽기 횟수도 준다.
+    """
+    q = get_db().collection("data")
+    if start:
+        q = q.where(filter=firestore.FieldFilter("date", ">=", start))
+    if end:
+        q = q.where(filter=firestore.FieldFilter("date", "<=", end))
+    return [{"id": d.id, **d.to_dict()} for d in q.stream()]

@@ -1,25 +1,23 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
 
-from schemas import DataCreate, DataUpdate
-from services.firebase import get_db
+from fastapi import APIRouter, HTTPException, Query
+
+from schemas import DataCreate, DataUpdate, Period
+from services.firebase import fetch_data, get_db
 from services.summary import build_summary
 
 router = APIRouter(prefix="/api/data", tags=["data"])
 
 
-def _fetch_all() -> list[dict]:
-    docs = get_db().collection("data").stream()
-    return [{"id": d.id, **d.to_dict()} for d in docs]
-
-
 @router.get("/summary")
-def data_summary():
-    return build_summary(_fetch_all())
+def data_summary(period: Annotated[Period, Query()]):
+    """요약. start·end(YYYY-MM-DD, 양 끝 포함)로 기간을 좁힐 수 있다."""
+    return build_summary(fetch_data(period.start, period.end))
 
 
 @router.get("")
-def list_data():
-    rows = sorted(_fetch_all(), key=lambda r: r["date"], reverse=True)
+def list_data(period: Annotated[Period, Query()]):
+    rows = sorted(fetch_data(period.start, period.end), key=lambda r: r["date"], reverse=True)
     return {"count": len(rows), "items": rows}
 
 

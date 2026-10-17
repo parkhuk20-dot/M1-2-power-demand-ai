@@ -48,6 +48,17 @@ button.danger {
   padding: 10px 12px; margin-bottom: 10px; font-size: 13px;
 }
 #summary-content { line-height: 1.6; }
+#period-form { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+#period-form input { padding: 3px 5px; border: 1px solid #cdd5df; border-radius: 5px; font-size: 12px; }
+#period-form button { padding: 4px 9px; font-size: 12px; }
+button.ghost { background: transparent; color: #14213d; border: 1px solid #cdd5df; }
+button.ghost:hover { background: #e6ecf4; }
+#summary-content details { margin-top: 4px; }
+#summary-content summary { cursor: pointer; color: #3a4a66; }
+#summary-content table { border-collapse: collapse; margin-top: 4px; font-size: 12px; width: 100%; }
+#summary-content th, #summary-content td { text-align: right; padding: 2px 8px; border-bottom: 1px solid #e3e9f1; }
+#summary-content th:first-child, #summary-content td:first-child { text-align: left; }
+#summary-content details > table { display: block; max-height: 200px; overflow-y: auto; }
 #chat-log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
 .msg { max-width: 80%; padding: 9px 13px; border-radius: 12px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
 .msg.user { align-self: flex-end; background: #14213d; color: #fff; }

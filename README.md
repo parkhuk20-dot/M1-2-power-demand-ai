@@ -31,11 +31,11 @@
 | 메서드 | 경로 | 설명 |
 |---|---|---|
 | POST | /api/data | 데이터 추가 (date, value, memo) |
-| GET | /api/data | 데이터 목록 조회 |
+| GET | /api/data | 데이터 목록 조회 (`?start=&end=`로 기간 지정 가능) |
 | PUT | /api/data/{id} | 데이터 수정 |
 | DELETE | /api/data/{id} | 데이터 삭제 |
-| GET | /api/data/summary | 요약(기간·개수·평균·최대·최소·추세) — 프롬프트 주입용 |
-| POST | /api/chat | AI 대화 (요약 주입 → GPT 호출 → 대화 자동 저장) |
+| GET | /api/data/summary | 요약(기간·개수·평균·최대·최소·추세 + 연도별·월별 집계) — 프롬프트 주입용. `?start=&end=`로 기간 지정 |
+| POST | /api/chat | AI 대화 (선택 기간 요약 주입 → GPT 호출 → 대화 자동 저장). body에 `period: {start, end}` 지정 가능 |
 | POST | /api/conversations | 대화 저장 |
 | GET | /api/conversations | 대화 목록 (메타데이터만) |
 | GET | /api/conversations/{id} | 특정 대화 전체 messages 조회 (불러오기용) |

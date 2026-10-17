@@ -31,6 +31,23 @@ def run():
     # 60개 미만 → 추세 판정 불가
     assert "부족" in build_summary(rows[:10])["trend"]
 
+    # 연도별·월별 집계: 입력 순서와 무관하게 그룹·날짜순으로 나와야 한다
+    mixed = [
+        {"date": "2025-02-01", "value": 30},
+        {"date": "2024-12-31", "value": 10},
+        {"date": "2025-01-15", "value": 50},
+        {"date": "2025-01-02", "value": 20},
+    ]
+    agg = build_summary(mixed)
+    assert [y["key"] for y in agg["yearly"]] == ["2024", "2025"]
+    y25 = agg["yearly"][1]
+    assert y25["count"] == 3 and y25["average"] == 33, y25
+    assert y25["max_date"] == "2025-01-15" and y25["min_date"] == "2025-01-02"
+    assert [m["key"] for m in agg["monthly"]] == ["2024-12", "2025-01", "2025-02"]
+    jan = agg["monthly"][1]
+    assert jan["count"] == 2 and jan["average"] == 35 and jan["max"] == 50, jan
+    assert build_summary([])["monthly"] == []
+
     print("test_summary: OK")
 
 
