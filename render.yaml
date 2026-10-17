@@ -14,8 +14,11 @@ services:
       # 로컬은 파일 경로, Render는 키 파일 내용(JSON) 전체를 붙여넣는다
       - key: FIREBASE_SERVICE_ACCOUNT_JSON
         sync: false
-      # Vercel 배포 후 프론트 주소로 좁힌다
+      - key: OPENAI_BASE_URL
+        value: https://copa.codyssey.kr/v1
+      - key: OPENAI_MODEL
+        value: gpt-5-mini
       - key: ALLOWED_ORIGINS
-        value: "*"
+        value: https://m1-2-power-demand-ai.vercel.app
       - key: PYTHON_VERSION
         value: "3.12.7"

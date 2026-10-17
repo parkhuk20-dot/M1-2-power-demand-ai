@@ -13,17 +13,15 @@
 |---|---|
 | 백엔드 | Python 3.10+, FastAPI, Pydantic, Uvicorn |
 | DB | Firebase Firestore (`data`, `conversations` 컬렉션) |
-| AI | OpenAI GPT (`gpt-4o-mini`, 시스템 프롬프트 컨텍스트 주입) |
+| AI | GPT (`gpt-5-mini`, 코디세이 OpenAI 호환 API 경유, 시스템 프롬프트 컨텍스트 주입) |
 | 프론트엔드 | HTML / CSS / Vanilla JavaScript |
 | 배포 | 백엔드 Render, 프론트엔드 Vercel |
 
 ## 배포 URL
 
-> 배포 후 아래를 채운다.
-
-- 프론트엔드: `https://<project>.vercel.app`
-- 백엔드 API: `https://<service>.onrender.com`
-- Swagger UI: `https://<service>.onrender.com/docs`
+- 프론트엔드: https://m1-2-power-demand-ai.vercel.app
+- 백엔드 API: https://m1-2-power-demand-api.onrender.com
+- Swagger UI: https://m1-2-power-demand-api.onrender.com/docs
 
 ⏱ 백엔드가 Render 무료 티어라 15분 미사용 시 슬립된다. **첫 요청은 최대 1분가량 걸릴 수 있다**
 (프론트 상단에 동일 안내 문구 표시).
@@ -65,10 +63,11 @@ python3 -m http.server 3000    # http://localhost:3000
 
 | 변수 | 설명 |
 |---|---|
-| `OPENAI_API_KEY` | OpenAI API 키 |
+| `OPENAI_API_KEY` | OpenAI 호환 API 키 (코디세이 API 콘솔에서 발급) |
+| `OPENAI_BASE_URL` | OpenAI 호환 서버 주소. 공식 OpenAI면 생략, 코디세이는 `https://copa.codyssey.kr/v1` |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | 서비스 계정 키 **JSON 문자열 전체** 또는 키 파일 경로 |
 | `ALLOWED_ORIGINS` | CORS 허용 도메인, 콤마 구분 (예: `https://xxx.vercel.app`) |
-| `OPENAI_MODEL` | (선택) 기본 `gpt-4o-mini` |
+| `OPENAI_MODEL` | 사용할 모델 ID. 배포는 `gpt-5-mini` (미지정 시 `gpt-4o-mini`) |
 | `API_BASE_URL` | (Vercel 전용) 프론트가 호출할 백엔드 주소 |
 
 키는 모두 환경 변수로만 관리하며 코드/저장소에 넣지 않는다 (`.gitignore` 처리).
@@ -80,7 +79,8 @@ python3 -m http.server 3000    # http://localhost:3000
 1. GitHub에 푸시 후 Render에서 **New → Web Service**, 저장소 연결
 2. Root Directory `backend`, Build `pip install -r requirements.txt`,
    Start `uvicorn main:app --host 0.0.0.0 --port $PORT`
-3. 환경 변수 3개 등록: `OPENAI_API_KEY`, `FIREBASE_SERVICE_ACCOUNT_JSON`(키 파일 내용 통째로 붙여넣기), `ALLOWED_ORIGINS`(Vercel 주소)
+3. 비밀 값 2개 입력: `OPENAI_API_KEY`, `FIREBASE_SERVICE_ACCOUNT_JSON`(키 파일 내용 통째로 붙여넣기).
+   `OPENAI_BASE_URL`·`OPENAI_MODEL`·`ALLOWED_ORIGINS`는 `render.yaml`에 이미 들어 있다
 4. 배포 후 `/docs` 접속 확인
 
 ### 프론트엔드 — Vercel
